@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.IndexCofficientMapper">
+
+
+    <sql id="common">
+        INCOME_COFFICIENT as incomeCofficient,
+        COAL_COFFICIENT as coalCofficient,
+        CO2_COFFICIENT as co2Cofficient,
+        DEFORESTATION as deforstation
+    </sql>
+
+    <select id="queryIndexMessage" resultType="com.hhgs.plantshows.model.DO.IndexCofficient">
+        select <include refid="common"></include> from DEVICEMODEL_INDEX_COFFICIENT
+    </select>
+
+    <update id="editData" parameterType="com.hhgs.plantshows.model.DO.IndexCofficient">
+        update DEVICEMODEL_INDEX_COFFICIENT set
+        <trim suffixOverrides=",">
+            <if test="indexCofficient.incomeCofficient != '' and indexCofficient.incomeCofficient != null">
+                INCOME_COFFICIENT = #{indexCofficient.incomeCofficient},
+            </if>
+
+            <if test="indexCofficient.coalCofficient != '' and indexCofficient.coalCofficient != null">
+                COAL_COFFICIENT = #{indexCofficient.coalCofficient},
+            </if>
+
+            <if test="indexCofficient.co2Cofficient != '' and indexCofficient.co2Cofficient != null">
+                CO2_COFFICIENT = #{indexCofficient.co2Cofficient},
+            </if>
+
+            <if test="indexCofficient.deforstation != '' and indexCofficient.deforstation != null">
+                DEFORESTATION = #{indexCofficient.deforstation}
+            </if>
+
+        </trim>
+    </update>
+
+</mapper>

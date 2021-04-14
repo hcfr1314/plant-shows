@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.BasicDeviceModelMapper">
+
+
+    <update id="editData" parameterType="com.hhgs.plantshows.model.DO.BaseDeviceModel">
+        UPDATE DEVICEMODEL_DEVICE_BASE SET
+        <trim suffixOverrides=",">
+            <if test="baseDeviceModel.effective != '' and baseDeviceModel.effective != null">
+                EFFECTIVE = #{baseDeviceModel.effective},
+            </if>
+            <if test="baseDeviceModel.deviceName != '' and baseDeviceModel.deviceName != null">
+                DEVICE_NAME=#{baseDeviceModel.deviceName},
+            </if>
+            <if test="baseDeviceModel.attributeID != '' and baseDeviceModel.attributeID != null">
+                ATTRIBUTE_ID=#{baseDeviceModel.attributeID},
+            </if>
+
+            <if test="baseDeviceModel.upperLimit != '' and baseDeviceModel.upperLimit != null">
+                UPPER_LIMIT=#{baseDeviceModel.upperLimit},
+            </if>
+
+            <if test="baseDeviceModel.lowerLimit != '' and baseDeviceModel.lowerLimit != null">
+                LOWER_LIMIT=#{baseDeviceModel.lowerLimit},
+            </if>
+            <if test="baseDeviceModel.pointType != '' and baseDeviceModel.pointType != null">
+                POINT_TYPE=#{baseDeviceModel.pointType},
+            </if>
+
+            <if test="baseDeviceModel.moreUpperLimit != '' and baseDeviceModel.moreUpperLimit != null">
+                MORE_UPPER_LIMIT = #{baseDeviceModel.moreUpperLimit},
+            </if>
+
+            <if test="baseDeviceModel.moreLowerLimit != '' and baseDeviceModel.moreLowerLimit != null">
+                MORE_LOWER_LIMIT = #{baseDeviceModel.moreLowerLimit}
+            </if>
+
+            <if test="baseDeviceModel.exceptionValue != '' and baseDeviceModel.exceptionValue != null">
+                EXCEPTION_VALUE = #{baseDeviceModel.exceptionValue}
+            </if>
+        </trim>
+        where ID = #{baseDeviceModel.id}
+    </update>
+
+    <sql id="common">
+        a.ID  id,a.DEVICE_NAME deviceName,a.EFFECTIVE effective,a.ATTRIBUTE_ID attributeID,a.EIGEN_VALUE eigenValue,a.UPPER_LIMIT upperLimit,a.lOWER_LIMIT lowerLimit,a.POINT_TYPE pointType, b.ATTRIBUTE_NAME_EN attributeNameEN,b.ATTRIBUTE_NAME_CN attributeNameCN,b.UNIT unit,a.DEVICE_TYPE deviceType
+    </sql>
+
+    <select id="queryByType" resultType="com.hhgs.plantshows.model.BO.BaseDeviceModelAndAttr">
+        select
+        <include refid="common"/>
+        FROM DEVICEMODEL_DEVICE_BASE a LEFT JOIN DEVICEMODEL_POINT_ATTRIBUTE b ON a.ATTRIBUTE_ID=b.ID
+        where a.DEVICE_TYPE=#{deviceType}
+        <if test="deviceName != null and deviceName!=''">
+            and a.DEVICE_NAME LIKE '%${deviceName}%'
+        </if>
+    </select>
+
+    <delete id="delByDeviceIdAndAttrId" parameterType="int">
+        delete from DEVICEMODEL_DEVICE_BASE WHERE ID=#{deviceId} and ATTRIBUTE_ID=#{attrId}
+    </delete>
+
+    <insert id="addData" parameterType="com.hhgs.plantshows.model.DO.BaseDeviceModel">
+        INSERT INTO DEVICEMODEL_DEVICE_BASE
+        (DEVICE_NAME,ATTRIBUTE_ID,DEVICE_TYPE,EFFECTIVE,UPPER_LIMIT,LOWER_LIMIT,POINT_TYPE)
+        VALUES (
+        <trim suffixOverrides=",">
+            <if test="baseDeviceModel.deviceName != '' and baseDeviceModel.deviceName != null">
+                #{baseDeviceModel.deviceName},
+            </if>
+            <if test="baseDeviceModel.attributeID != '' and baseDeviceModel.attributeID != null">
+                #{baseDeviceModel.attributeID},
+            </if>
+            <if test="baseDeviceModel.deviceType != '' and baseDeviceModel.deviceType != null">
+                #{baseDeviceModel.deviceType},
+            </if>
+            <if test="baseDeviceModel.effective != '' and baseDeviceModel.effective != null">
+                #{baseDeviceModel.effective},
+            </if>
+
+            <if test="baseDeviceModel.upperLimit != '' and baseDeviceModel.upperLimit != null">
+                #{baseDeviceModel.upperLimit},
+            </if>
+
+            <if test="baseDeviceModel.lowerLimit != '' and baseDeviceModel.lowerLimit != null">
+                #{baseDeviceModel.lowerLimit},
+            </if>
+            <if test="baseDeviceModel.pointType != '' and baseDeviceModel.pointType != null">
+                #{baseDeviceModel.pointType},
+            </if>
+        </trim>
+        )
+    </insert>
+
+    <delete id="deleteDevcie">
+        delete from DEVICEMODEL_DEVICE_BASE where DEVICE_NAME = #{deviceName} and DEVICE_TYPE =#{type}
+    </delete>
+
+</mapper>

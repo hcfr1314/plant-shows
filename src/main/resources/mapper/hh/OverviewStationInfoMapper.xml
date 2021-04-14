@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.OverviewStationInfoMapper">
+
+ <select id="queryOverview" resultType="com.hhgs.plantshows.model.DO.OverviewStationInfo">
+    select ID id,GROUD_TYPE groudType,DISTRUIBUTED distritubed,MERGE_INTERNET mergeNet,BREAKDOWN breakDown,REPORT_INTERRUPTED reportInterrupted,RUNNING_DAY runningDays,TOTAL_INSTALL_CAP totalInstallCap,ALREADY_MERGE_NET alreayMerge,MERGE_BUY mergeBuy,UNDER_CONSTRUCTION underConstruction
+    from DEVICEMODEL_STATION_OVERVIEW
+ </select>
+
+ <update id="updateDays">
+    update DEVICEMODEL_STATION_OVERVIEW set RUNNING_DAY=RUNNING_DAY+1
+ </update>
+
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.ParametarShowsMapper">
+
+    <sql id="indexData">
+        CURRENT_GENERATION as currentGeneration,
+        MONTH_ACC_GENERATION as monthGeneration,
+        CURRENT_ON_GRID_ENERGY as currentOnGridEnergy,
+        MONTH_ACC_ON_GRID_ENERGY as monthAccOnGridEnergy,
+        CREATE_TIME as createTime,
+        PLANT_CODE as plantCode,
+        YEAR_ACC_GENERATION as yearGeneration,
+        YEAR_ACC_ON_GRID_ENERGY as yearAccOnGridEnergy
+    </sql>
+
+    <sql id="Irradiation">
+        MONTH_ACC_IRRADIATION as monthAccIrradition,
+        CURRENT_IRRADIATION as currentIrradition,
+        MONTH_ACC_SUN_HOURS totalSunShineOfMonth,
+        CURRENT_SUN_HOURS totalSunShineOfDay,
+        PLANT_CODE plantCode
+    </sql>
+
+    <sql id="plantInfo">
+        PLANT_CODE as plantCode,
+        INSTALL_CAPACITY as installCapacity,
+        PLANT_TYPE as plantType,
+        PLANT_NAME as plantName
+    </sql>
+
+    <select id="queryIndexValue" parameterType="int" resultType="com.hhgs.plantshows.model.DO.IndexData">
+      select  <include refid="indexData"></include> from WEBAPP_ELECTRICITY_INDEX where PLANT_CODE = #{plantCode} and  TO_CHAR(CREATE_TIME,'YYYY-MM-DD') = TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+    </select>
+    
+    <select id="queryByPlantCodeAndDate" parameterType="list" resultType="com.hhgs.plantshows.model.DO.IndexData">
+        select <include refid="indexData"/> from WEBAPP_ELECTRICITY_INDEX where TO_CHAR(CREATE_TIME,'YYYY-MM-DD') =TO_CHAR(SYSDATE-1,'YYYY-MM-DD') and PLANT_CODE IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--查询当月累计辐照量-->
+    <select id="queryMonthAccIrradiation" parameterType="int" resultType="com.hhgs.plantshows.model.DO.IrradiationIndex">
+        select  <include refid="Irradiation"></include> from WEBAPP_SOLAR_ENERGY_RESOURCE where PLANT_CODE = #{plantCode} and TO_CHAR(CREATE_TIME,'YYYY-MM-DD') = TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+    </select>
+
+    <select id="queryPlantInfo"  resultType="com.hhgs.plantshows.model.DO.PlantInfo">
+        select <include refid="plantInfo"></include>  from DEVICEMODEL_PLANT_INFO
+    </select>
+
+
+    <select id="queryAllStationThisMontData" parameterType="list" resultType="com.hhgs.plantshows.model.DO.IndexData">
+        select <include refid="indexData"/> from WEBAPP_ELECTRICITY_INDEX where TO_CHAR(CREATE_TIME,'YYYY-MM') =TO_CHAR(SYSDATE,'YYYY-MM') and PLANT_CODE IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+         order by CREATE_TIME asc
+    </select>
+
+    <!--查询当月月上网电量-->
+    <select id="queryMonthAccOnGridEnergy" resultType="com.hhgs.plantshows.model.DO.IndexData">
+        select MONTH_ACC_ON_GRID_ENERGY monthAccOnGridEnergy,CURRENT_ON_GRID_ENERGY as currentOnGridEnergy ,CREATE_TIME createTime from WEBAPP_ELECTRICITY_INDEX where PLANT_CODE=#{plantCode} and to_char(CREATE_TIME,'YYYY-MM') = #{date}  order by CREATE_TIME asc
+    </select>
+
+    <select id="queryTotalSunlightByMonth" parameterType="int" resultType="com.hhgs.plantshows.model.DO.IrradiationIndex">
+        select  <include refid="Irradiation"></include> from WEBAPP_SOLAR_ENERGY_RESOURCE where TO_CHAR(CREATE_TIME,'YYYY-MM-DD') = TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+    </select>
+
+
+
+</mapper>

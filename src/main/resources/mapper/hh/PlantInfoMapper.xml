@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.PlantInfoMapper">
+
+    <sql id="plantInfo">
+        ID as id,
+        PLANT_NAME as plantName,
+        PLANT_CODE as plantCode,
+        PLANT_TYPE as plantType,
+        INSTALL_CAPACITY as installCapacity,
+        STRING_TRACKING_MODE as stringTrackingMode,
+        TOTAL_FLOOR_AREA as totalFloorArea,
+        INSERT_TIME as insertTime,
+        PLANNED_OPERATION_PERIOD as plannedOperationPeriod,
+        INVERTER_TYPE as inverterType,
+        ALTITUDE as attitude,
+        NUMBER_OF_STRINGS as numberOfStrings,
+        NUMBER_OF_INVERTERS as numberOfInverters,
+        NUMBER_OF_PHA_TRANSITIONS as numberOfPhaTransitions,
+        NUMBER_OF_COM_BOXES as numberOfComBoxes,
+        SITES as sites,
+        LOCATION_POWER_STATION as locationPowerStation,
+        GIS_CORRDINATE as gisCorrdinate,
+        DIP_ANGLE as dipAngle
+    </sql>
+
+    <select id="queryPlantInfoByPlantCode" parameterType="int" resultType="com.hhgs.plantshows.model.DO.PlantInfo">
+        select <include refid="plantInfo"></include> from DEVICEMODEL_PLANT_INFO
+        <if test="plantCode != null and plantCode != ''">
+            where PLANT_CODE = #{plantCode}
+        </if>
+    </select>
+
+    <insert id="addData" parameterType="com.hhgs.plantshows.model.DO.PlantInfo">
+        insert into DEVICEMODEL_PLANT_INFO (
+        <trim suffixOverrides=",">
+            <if test="plantInfo.plantName != null and plantInfo.plantName != ''">
+                PLANT_NAME,
+            </if>
+            <if test="plantInfo.plantCode != null and plantInfo.plantCode != ''">
+                PLANT_CODE,
+            </if>
+            <if test="plantInfo.plantType != null and plantInfo.plantType != ''">
+                PLANT_TYPE,
+            </if>
+            <if test="plantInfo.installCapacity != null and plantInfo.installCapacity != ''">
+                INSTALL_CAPACITY,
+            </if>
+            <if test="plantInfo.stringTrackingMode != null and plantInfo.stringTrackingMode != ''">
+                STRING_TRACKING_MODE,
+            </if>
+            <if test="plantInfo.totalFloorArea != null and plantInfo.totalFloorArea != ''">
+                TOTAL_FLOOR_AREA,
+            </if>
+            <if test="plantInfo.insertTime != null">
+                INSERT_TIME,
+            </if>
+            <if test="plantInfo.plannedOperationPeriod != null and plantInfo.plannedOperationPeriod != ''">
+                PLANNED_OPERATION_PERIOD,
+            </if>
+            <if test="plantInfo.inverterType != null and plantInfo.inverterType != ''">
+                INVERTER_TYPE,
+            </if>
+            <if test="plantInfo.attitude != null and plantInfo.attitude != ''">
+                ALTITUDE,
+            </if>
+            <if test="plantInfo.numberOfStrings != null and plantInfo.numberOfStrings != ''">
+                NUMBER_OF_STRINGS,
+            </if>
+            <if test="plantInfo.numberOfInverters != null and plantInfo.numberOfInverters != ''">
+                NUMBER_OF_INVERTERS,
+            </if>
+            <if test="plantInfo.numberOfPhaTransitions != null and plantInfo.numberOfPhaTransitions != ''">
+                NUMBER_OF_PHA_TRANSITIONS,
+            </if>
+            <if test="plantInfo.numberOfComBoxes != null and plantInfo.numberOfComBoxes != ''">
+                NUMBER_OF_COM_BOXES,
+            </if>
+            <if test="plantInfo.sites != null and plantInfo.sites != ''">
+                SITES,
+            </if>
+            <if test="plantInfo.locationPowerStation != null and plantInfo.locationPowerStation != ''">
+                LOCATION_POWER_STATION,
+            </if>
+            <if test="plantInfo.gisCorrdinate != null and plantInfo.gisCorrdinate != ''">
+                GIS_CORRDINATE,
+            </if>
+            <if test="plantInfo.dipAngle != '' and plantInfo.dipAngle != null">
+                DIP_ANGLE
+            </if>
+        </trim>
+        ) values
+        (
+        <trim suffixOverrides=",">
+            <if test="plantInfo.plantName != null and plantInfo.plantName != ''">
+                #{plantInfo.plantName},
+            </if>
+            <if test="plantInfo.plantCode != null and plantInfo.plantCode != ''">
+                #{plantInfo.plantCode},
+            </if>
+            <if test="plantInfo.plantType != null and plantInfo.plantType != ''">
+                #{plantInfo.plantType},
+            </if>
+            <if test="plantInfo.installCapacity != null and plantInfo.installCapacity != ''">
+                #{plantInfo.installCapacity},
+            </if>
+            <if test="plantInfo.stringTrackingMode != null and plantInfo.stringTrackingMode != ''">
+                #{plantInfo.stringTrackingMode},
+            </if>
+            <if test="plantInfo.totalFloorArea != null and plantInfo.totalFloorArea != ''">
+                #{plantInfo.totalFloorArea},
+            </if>
+            <if test="plantInfo.insertTime != null">
+                #{plantInfo.insertTime},
+            </if>
+            <if test="plantInfo.plannedOperationPeriod != null and plantInfo.plannedOperationPeriod != ''">
+                #{plantInfo.plannedOperationPeriod},
+            </if>
+            <if test="plantInfo.inverterType != null and plantInfo.inverterType != ''">
+                #{plantInfo.inverterType},
+            </if>
+            <if test="plantInfo.attitude != null and plantInfo.attitude != ''">
+                #{plantInfo.attitude},
+            </if>
+            <if test="plantInfo.numberOfStrings != null and plantInfo.numberOfStrings != ''">
+                #{plantInfo.numberOfStrings},
+            </if>
+            <if test="plantInfo.numberOfInverters != null and plantInfo.numberOfInverters != ''">
+                #{plantInfo.numberOfInverters},
+            </if>
+            <if test="plantInfo.numberOfPhaTransitions != null and plantInfo.numberOfPhaTransitions != ''">
+                #{plantInfo.numberOfPhaTransitions},
+            </if>
+            <if test="plantInfo.numberOfComBoxes != null and plantInfo.numberOfComBoxes != ''">
+                #{plantInfo.numberOfComBoxes},
+            </if>
+            <if test="plantInfo.sites != null and plantInfo.sites != ''">
+                #{plantInfo.sites},
+            </if>
+            <if test="plantInfo.locationPowerStation != null and plantInfo.locationPowerStation != ''">
+                #{plantInfo.locationPowerStation},
+            </if>
+            <if test="plantInfo.gisCorrdinate != null and plantInfo.gisCorrdinate != ''">
+                #{plantInfo.gisCorrdinate},
+            </if>
+            <if test="plantInfo.dipAngle != '' and plantInfo.dipAngle != null">
+                #{plantInfo.dipAngle}
+            </if>
+        </trim>
+        )
+    </insert>
+
+    <update id="editData" parameterType="com.hhgs.plantshows.model.DO.PlantInfo">
+        update DEVICEMODEL_PLANT_INFO set
+        <trim suffixOverrides=",">
+            <if test="plantInfo.plantName != '' and plantInfo.plantName != null">
+                PLANT_NAME = #{plantInfo.plantName},
+            </if>
+            <if test="plantInfo.plantCode != '' and plantInfo.plantCode != null">
+                PLANT_CODE = #{plantInfo.plantCode},
+            </if>
+            <if test="plantInfo.plantType != '' and plantInfo.plantType != null">
+                PLANT_TYPE = #{plantInfo.plantType},
+            </if>
+
+            <if test="plantInfo.installCapacity != '' and plantInfo.installCapacity != null">
+                INSTALL_CAPACITY = #{plantInfo.installCapacity},
+            </if>
+
+            <if test="plantInfo.stringTrackingMode != '' and plantInfo.stringTrackingMode != null">
+                STRING_TRACKING_MODE = #{plantInfo.stringTrackingMode},
+            </if>
+            <if test="plantInfo.totalFloorArea != '' and plantInfo.totalFloorArea != null">
+                TOTAL_FLOOR_AREA = #{plantInfo.totalFloorArea},
+            </if>
+            <if test="plantInfo.insertTime != null">
+                INSERT_TIME = #{plantInfo.insertTime},
+            </if>
+            <if test="plantInfo.plannedOperationPeriod != '' and plantInfo.plannedOperationPeriod != null">
+                PLANNED_OPERATION_PERIOD = #{plantInfo.plannedOperationPeriod},
+            </if>
+            <if test="plantInfo.inverterType != '' and plantInfo.inverterType != null">
+                INVERTER_TYPE = #{plantInfo.inverterType},
+            </if>
+            <if test="plantInfo.attitude != '' and plantInfo.attitude != null">
+                ALTITUDE = #{plantInfo.attitude},
+            </if>
+            <if test="plantInfo.numberOfStrings != '' and plantInfo.numberOfStrings != null">
+                NUMBER_OF_STRINGS = #{plantInfo.numberOfStrings},
+            </if>
+            <if test="plantInfo.numberOfInverters != '' and plantInfo.numberOfInverters != null">
+                NUMBER_OF_INVERTERS = #{plantInfo.numberOfInverters},
+            </if>
+            <if test="plantInfo.numberOfPhaTransitions != '' and plantInfo.numberOfPhaTransitions != null">
+                NUMBER_OF_PHA_TRANSITIONS = #{plantInfo.numberOfPhaTransitions},
+            </if>
+            <if test="plantInfo.numberOfComBoxes != '' and plantInfo.numberOfComBoxes != null">
+                NUMBER_OF_COM_BOXES = #{plantInfo.numberOfComBoxes},
+            </if>
+            <if test="plantInfo.sites != '' and plantInfo.sites != null">
+                SITES = #{plantInfo.sites},
+            </if>
+            <if test="plantInfo.locationPowerStation != '' and plantInfo.locationPowerStation != null">
+                LOCATION_POWER_STATION = #{plantInfo.locationPowerStation},
+            </if>
+            <if test="plantInfo.gisCorrdinate != '' and plantInfo.gisCorrdinate != null">
+                GIS_CORRDINATE = #{plantInfo.gisCorrdinate},
+            </if>
+            <if test="plantInfo.dipAngle != '' and plantInfo.dipAngle != null">
+                DIP_ANGLE = #{plantInfo.dipAngle}
+            </if>
+        </trim>
+        where ID = #{plantInfo.id}
+    </update>
+
+
+    <delete id="deleteById" parameterType="int">
+        delete from DEVICEMODEL_PLANT_INFO where ID = #{id}
+    </delete>
+
+</mapper>

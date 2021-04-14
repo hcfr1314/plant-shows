@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.NetAndPlanPowerMapper">
+
+    <select id="queryThisYearData" resultType="com.hhgs.plantshows.model.DO.NetAndPlanPower">
+        select ID id,NET_POWER netPower,PLAN_POWER planPower,CREATE_TIME createDate from DEVICEMODEL_HUANGHE_NET_PLAN where TO_CHAR(CREATE_TIME,'YYYY') =TO_CHAR(SYSDATE,'YYYY')
+
+    </select>
+
+    <select id="judgeData" resultType="com.hhgs.plantshows.model.DO.NetAndPlanPower">
+        select ID id,NET_POWER netPower,PLAN_POWER planPower,CREATE_TIME createDate from DEVICEMODEL_HUANGHE_NET_PLAN where TO_CHAR(CREATE_TIME,'YYYY-MM') =TO_CHAR(SYSDATE-1,'YYYY-MM')
+    </select>
+
+    <update id="updateNetPower">
+        update DEVICEMODEL_HUANGHE_NET_PLAN set NET_POWER=#{netPower} where TO_CHAR(CREATE_TIME,'YYYY-MM') =TO_CHAR(SYSDATE-1,'YYYY-MM')
+    </update>
+
+    <insert id="save" parameterType="com.hhgs.plantshows.model.DO.IndexData">
+        insert into DEVICEMODEL_HUANGHE_NET_PLAN(CREATE_TIME,PLAN_POWER) values (SYSDATE,#{totalPower.monthAccOnGridEnergy})
+ </insert>
+
+
+</mapper>

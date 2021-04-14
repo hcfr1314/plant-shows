@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.BaseDeviceMapper">
+
+    <!--批量插入-->
+    <insert id="batchInsert"  parameterType="com.hhgs.plantshows.model.UtilModel.BasicDevice">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            into DEVICEMODEL_DEVICE_BASE
+            (DEVICE_NAME,EFFECTIVE,ATTRIBUTE_ID,ID,DEVICE_TYPE
+            <if test="item.eigenValue != null and item.eigenValue != ''">
+                ,EIGEN_VALUE
+            </if>
+
+            <if test="item.lowerLimit != null and item.lowerLimit != ''">
+                ,UPPER_LIMIT
+            </if>
+
+            <if test="item.upperLimit != null and item.upperLimit != ''">
+                ,lOWER_LIMIT
+            </if>
+
+            <if test="item.upperLimit != null and item.upperLimit != ''">
+                ,lOWER_LIMIT
+            </if>
+
+            <if test="item.pointType != null and item.pointType != ''">
+                ,POINT_TYPE
+            </if>
+            )
+            values (#{item.deviceName},#{item.effective},#{item.attr_id},NUll,#{item.deviceType}
+            <if test="item.eigenValue != null and item.eigenValue != ''">
+                ,#{item.eigenValue}
+            </if>
+
+            <if test="item.lowerLimit != null and item.lowerLimit != ''">
+                ,#{item.lowerLimit}
+            </if>
+
+            <if test="item.upperLimit != null and item.upperLimit != ''">
+                ,#{item.upperLimit}
+            </if>
+
+            <if test="item.pointType != null and item.pointType != ''">
+                ,#{item.pointType}
+            </if>
+            )
+        </foreach>
+        select 1 from dual
+    </insert>
+
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.InfluxDBDataObjectMapper">
+    
+    <select id="queryObjectNameByStationName" resultType="com.hhgs.plantshows.model.DO.InfluxDBDataObject">
+        SELECT SITE_NAME stationName, OBJECT_NAME_1 dataObjectName,OBJECT_NAME_2 plantCode FROM SITE_DATA_OBJECT_RELATE WHERE BUS_TYPE=2 AND SITE_NAME IN
+        <foreach collection="nameList" open="(" close=")" separator="," item="item">
+           #{item}
+        </foreach>
+    </select>
+</mapper>

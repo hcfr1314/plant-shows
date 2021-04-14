@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.BaseAttrOfPointMapper">
+
+    <select id="queryByType" parameterType="int" resultType="com.hhgs.plantshows.model.UtilModel.BasicAttributeModel">
+        select ID id,ATTRIBUTE_NAME_EN attributeNameEN,ATTRIBUTE_NAME_CN attributeNameCN,TYPE  type from DEVICEMODEL_POINT_ATTRIBUTE where TYPE = #{type}
+    </select>
+
+
+    <insert id="insertAttr" parameterType="com.hhgs.plantshows.model.DO.BasicAttribute">
+      INSERT INTO
+        DEVICEMODEL_POINT_ATTRIBUTE (ID,ATTRIBUTE_NAME_EN, ATTRIBUTE_NAME_CN, TYPE, UNIT) VALUES
+        (DM_POINT_ATTRIBUTE_SQUENCE.nextval,#{attributeNameEN}, #{attributeNameCN}, #{type}, #{unit})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            select DM_POINT_ATTRIBUTE_SQUENCE.currval id from dual
+        </selectKey>
+    </insert>
+</mapper>

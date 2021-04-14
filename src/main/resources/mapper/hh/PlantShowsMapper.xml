@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.PlantShowsMapper">
+    <resultMap id="BaseResultMap" type="com.hhgs.plantshows.model.DO.ImportData">
+        <result column="BIGSYS_NAME" jdbcType="VARCHAR" property="bigsysName"/>
+        <result column="SMALLSYS_NAME" jdbcType="VARCHAR" property="smallsysName"/>
+        <result column="FIRSTS_DEVICE_NAME" jdbcType="VARCHAR" property="firstsDeviceName"/>
+        <result column="SECONDS_DEVICE_NAME" jdbcType="VARCHAR" property="secondsDeviceName"/>
+        <result column="PARTS_NAME" jdbcType="VARCHAR" property="partsName"/>
+        <result column="POINT_NAME" jdbcType="VARCHAR" property="pointName"/>
+        <result column="GLOBAL_NUMBER" jdbcType="VARCHAR" property="globalNumber"/>
+        <result column="ORIGINAL_NUMBER" jdbcType="VARCHAR" property="originalPoint"/>
+        <result column="POINT_DESCRIPT" jdbcType="VARCHAR" property="pointDescript"/>
+    </resultMap>
+
+    <sql id="common">
+        ID AS id,
+        PLANT_NAME AS plantName,
+        PLANT_TYPE AS plantType,
+        IS_HIERARCHY AS isHierarchy,
+        PLANT_CODE AS plantCode
+    </sql>
+
+    <sql id="LCU">
+        ID as id,
+        LCU_ID as lcuId,
+        SYS as sys,
+        EQUIPMENT_NAME as equipmentName,
+        PLANT_CODE as plantCode,
+        PLANT_NAME as plantName
+    </sql>
+
+    <!--多条件查询-->
+    <select id="getAllDataWithPlantTableAndCondition" resultMap="BaseResultMap">
+        select BIGSYS_NAME,SMALLSYS_NAME,FIRSTS_DEVICE_NAME,SECONDS_DEVICE_NAME,PARTS_NAME,POINT_NAME,GLOBAL_NUMBER,ORIGINAL_NUMBER,POINT_DESCRIPT from
+        ${plantTable}
+        WHERE 1=1
+        <choose>
+            <when test="importData.bigsysName !=null and importData.bigsysName !=''">
+                AND BIGSYS_NAME = #{importData.bigsysName}
+            </when>
+            <otherwise>
+                AND BIGSYS_NAME is null
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="importData.smallsysName !=null and importData.smallsysName !=''">
+                AND SMALLSYS_NAME = #{importData.smallsysName}
+            </when>
+            <otherwise>
+                AND SMALLSYS_NAME is null
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="importData.firstsDeviceName !=null and importData.firstsDeviceName !=''">
+                AND FIRSTS_DEVICE_NAME = #{importData.firstsDeviceName}
+            </when>
+            <otherwise>
+                AND FIRSTS_DEVICE_NAME is null
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="importData.secondsDeviceName !=null and importData.secondsDeviceName !=''">
+                AND SECONDS_DEVICE_NAME = #{importData.secondsDeviceName}
+            </when>
+            <otherwise>
+                AND SECONDS_DEVICE_NAME is null
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="importData.isOrNotNull == '0'">
+                and ORIGINAL_NUMBER is null
+            </when>
+
+            <when test="importData.isOrNotNull == '1'">
+                and ORIGINAL_NUMBER is not null
+            </when>
+            <otherwise>
+                AND 1 = 1
+            </otherwise>
+        </choose>
+
+        <if test="importData.pointDescript != null and importData.pointDescript!=''">
+            and POINT_DESCRIPT LIKE '%${importData.pointDescript}%'
+        </if>
+    </select>
+
+    <select id="getAllDataWithPlantTableAndDescript" resultMap="BaseResultMap">
+        select BIGSYS_NAME,SMALLSYS_NAME,FIRSTS_DEVICE_NAME,SECONDS_DEVICE_NAME,PARTS_NAME,POINT_NAME,GLOBAL_NUMBER,ORIGINAL_NUMBER,POINT_DESCRIPT from
+        ${plantTable}
+        WHERE 1=1
+        <if test="importData.pointDescript != null and importData.pointDescript!=''">
+            and POINT_DESCRIPT LIKE '%${importData.pointDescript}%'
+        </if>
+    </select>
+
+
+    <!--根据场站名称查询场站所属oracle表名-->
+    <select id="getPlantTableWithPlantName" resultType="java.lang.String" parameterType="java.lang.String">
+        select PLANT_TABLE_NAME from DEVICEMODEL_PLANT_TABLE where PLANT_NAME = #{plantName}
+    </select>
+
+
+    <!--根据场站名称查询场站序号id-->
+    <select id="getPlantIdWithPlantName" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select ID from DEVICEMODEL_PLANT_TABLE where PLANT_NAME = #{plantName}
+    </select>
+
+    <update id="updateHierarchyStatus">
+        update DEVICEMODEL_PLANT_TABLE set IS_HIERARCHY = #{status} where PLANT_NAME = #{plantName}
+    </update>
+
+
+    <!--根据场站名称查询场站所属hbase表名-->
+    <select id="getHbaseTableWithPlantName" resultType="java.lang.String" parameterType="java.lang.String">
+        select HBASE_TABLE_NAME from DEVICEMODEL_PLANT_TABLE where PLANT_NAME = #{plantName}
+    </select>
+
+    <!--根据场站编号获取lcu信息-->
+    <select id="getLcuAndEquipmentByPlantCode" parameterType="int" resultType="com.hhgs.plantshows.model.DO.LcuEquipment">
+        select <include refid="LCU"></include> from DEVICEMODEL_LCU where PLANT_CODE = #{plantCode}
+    </select>
+
+    <!--批量插入-->
+    <insert id="batchInsert" parameterType="com.hhgs.plantshows.model.DO.ImportData">
+        insert all
+        <foreach collection="result" item="item" index="index">
+            into ${plantTable}
+            (BIGSYS_NAME,
+            <trim suffixOverrides=",">
+            <if test="item.smallsysName != null and item.smallsysName != ''">
+                SMALLSYS_NAME,
+            </if>
+            <if test="item.firstsDeviceName != null and item.firstsDeviceName != ''">
+                FIRSTS_DEVICE_NAME,
+            </if>
+            <if test="item.secondsDeviceName != null and item.secondsDeviceName != ''">
+                SECONDS_DEVICE_NAME,
+            </if>
+            <if test="item.partsName != null and item.partsName != ''">
+                PARTS_NAME,
+            </if>
+
+            <if test="item.firstsDeviceSign != null and item.firstsDeviceSign != ''">
+                FIRSTS_DEVICE_SIGN,
+            </if>
+
+            <if test="item.secondsDeviceSign != null and item.secondsDeviceSign != ''">
+                SECONDS_DEVICE_SIGN,
+            </if>
+
+            <if test="item.pointName != null and item.pointName != ''">
+                POINT_NAME,
+            </if>
+
+            <if test="item.globalNumber != null and item.globalNumber != ''">
+                GLOBAL_NUMBER,
+            </if>
+
+            <if test="item.originalPoint != null and item.originalPoint != ''">
+                ORIGINAL_NUMBER,
+            </if>
+
+            <if test="item.pointDescript != null and item.pointDescript != ''">
+                POINT_DESCRIPT,
+            </if>
+
+            <if test="item.bracketType != null and item.bracketType != ''">
+                BRACKET_TYPE,
+            </if>
+
+            <if test="item.componentType != null and item.componentType != ''">
+                COMPONENT_TYPE,
+            </if>
+            </trim>
+            )
+            values (#{item.bigsysName},
+
+            <trim suffixOverrides=",">
+            <if test="item.smallsysName != null and item.smallsysName != ''">
+                #{item.smallsysName},
+            </if>
+
+            <if test="item.firstsDeviceName != null and item.firstsDeviceName != ''">
+                #{item.firstsDeviceName},
+            </if>
+
+            <if test="item.secondsDeviceName != null and item.secondsDeviceName != ''">
+                #{item.secondsDeviceName},
+            </if>
+
+            <if test="item.partsName != null and item.partsName != ''">
+                #{item.partsName},
+            </if>
+
+            <if test="item.firstsDeviceSign != null and item.firstsDeviceSign != ''">
+                #{item.firstsDeviceSign},
+            </if>
+
+            <if test="item.secondsDeviceSign != null and item.secondsDeviceSign != ''">
+                #{item.secondsDeviceSign},
+            </if>
+
+            <if test="item.pointName != null and item.pointName != ''">
+                #{item.pointName},
+            </if>
+
+            <if test="item.globalNumber != null and item.globalNumber != ''">
+                #{item.globalNumber},
+            </if>
+
+            <if test="item.originalPoint != null and item.originalPoint != ''">
+                #{item.originalPoint},
+            </if>
+
+            <if test="item.pointDescript != null and item.pointDescript != ''">
+                #{item.pointDescript},
+            </if>
+
+            <if test="item.bracketType != null and item.bracketType != ''">
+                #{item.bracketType},
+            </if>
+
+            <if test="item.componentType != null and item.componentType != ''">
+                #{item.componentType},
+            </if>
+            </trim>
+           )
+        </foreach>
+        select 1 from dual
+    </insert>
+
+
+    <select id="getAllPlantName" resultType="com.hhgs.plantshows.model.DO.PlantTable">
+        select <include refid="common"></include> from DEVICEMODEL_PLANT_TABLE ORDER BY ID
+    </select>
+
+    <delete id="deleteByTableName" parameterType="java.lang.String">
+        delete from ${tableName}
+    </delete>
+
+</mapper>

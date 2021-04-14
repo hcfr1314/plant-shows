@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.ComputeIndexMapper">
+
+    <!--批量插入指标计算结果数据-->
+    <insert id="batchInsertIndexData"  parameterType="com.hhgs.plantshows.model.DO.ComputeIndex">
+      insert all
+      <foreach collection="computeIndexList" item="item" index="index">
+          into DEVICEMODEL_COMPUTE_INDEX (CO2,STRANDARD_COAL,DEFORESTATION,CUEERNT_EARNINGS,MONTH_EARNINGS,MONTH_EQU_UTILIZATION_HOURS,DAY_EQU_UTILIZATION_HOURS,POWER_EFFICIENCY,SINGL_MW_EFFICIENCY,CREATE_TIME,PLANT_CODE)
+          values (#{item.co2},#{item.strandardCoal},#{item.deforestation},#{item.currentEarnings},#{item.monthEarnings},#{item.monthEquUtilizationHours},#{item.dayEquUtilizationHours},#{item.powerEficiency},#{item.singlMWEficiency},sysdate-1,#{item.plantCode})
+      </foreach>
+        select 1 from dual
+    </insert>
+
+    <sql id="common">
+        CO2 as co2,
+        STRANDARD_COAL as strandardCoal,
+        DEFORESTATION as deforestation,
+        CUEERNT_EARNINGS as currentEarnings,
+        MONTH_EARNINGS as monthEarnings,
+        MONTH_EQU_UTILIZATION_HOURS as monthEquUtilizationHours,
+        DAY_EQU_UTILIZATION_HOURS as dayEquUtilizationHours,
+        POWER_EFFICIENCY as powerEficiency,
+        SINGL_MW_EFFICIENCY as singlMWEficiency,
+        CREATE_TIME as createTime,
+        PLANT_CODE as plantCode
+    </sql>
+
+    <!--查询指标数据-->
+    <select id="queryIndexByPlantCode" parameterType="int" resultType="com.hhgs.plantshows.model.DO.ComputeIndex">
+        select  <include refid="common"></include> from DEVICEMODEL_COMPUTE_INDEX where PLANT_CODE =#{plantCode} and TO_CHAR(CREATE_TIME,'YYYY-MM-DD') = TO_CHAR(SYSDATE-1,'YYYY-MM-DD')
+    </select>
+
+    <select id="queryIndexByCodeAndDate" parameterType="list" resultType="com.hhgs.plantshows.model.DO.ComputeIndex">
+        select <include refid="common"/>
+        from DEVICEMODEL_COMPUTE_INDEX where TO_CHAR(CREATE_TIME,'YYYY-MM') =TO_CHAR(SYSDATE,'YYYY-MM') and PLANT_CODE IN
+        <foreach collection="codes" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="queryComputeIndex" resultType="com.hhgs.plantshows.model.DO.ComputeIndex">
+        select CUEERNT_EARNINGS currentEarnings, MONTH_EARNINGS monthEarnings,CREATE_TIME createTime from DEVICEMODEL_COMPUTE_INDEX where PLANT_CODE=#{plantCode} and to_char(CREATE_TIME,'YYYY-MM') = #{date}  order by CREATE_TIME asc
+    </select>
+
+</mapper>

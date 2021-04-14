@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.UitlMapper">
+
+    <!--批量插入-->
+    <insert id="insertSmallsys"  parameterType="com.hhgs.plantshows.model.DO.BigsysSmallsys">
+        insert all
+        <foreach collection="list" item="item" index="index">
+             INTO DEVICEMODEL_BIGSYS_SMALLSYS
+            (BIGSYS_ID,
+            <if test="item.smallsysName!=null and item.smallsysName!=''">
+                SMALLSYS_NAME,
+            </if>  PLANT_NAME)
+            VALUES ( #{item.bigsysId},
+            <if test="item.smallsysName!=null and item.smallsysName!=''">
+                #{item.smallsysName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <!--批量插入-->
+    <insert id="insertFirstsDevice"  parameterType="com.hhgs.plantshows.model.DO.SmallsysFirstsDevice">
+        insert all
+        <foreach collection="list" item="item" index="index">
+             INTO DEVICEMODEL_SMALLSYS_F_DEVICE
+                ( SMALLSYS_ID,
+            <if test="item.deviceName != null and item.deviceName != ''">
+                DEVICE_NAME,
+            </if>
+             PLANT_NAME)
+            VALUES ( #{item.smallsysId},
+            <if test="item.deviceName != null and item.deviceName != ''">
+            #{item.deviceName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+
+    <insert id="insertBracket"  parameterType="com.hhgs.plantshows.model.DO.SmallsysBracket">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            INTO DEVICEMODEL_SMALLSYS_BRACKET
+            ( SMALLSYS_ID,
+            <if test="item.bracketName != null and item.bracketName != ''">
+                BRACKET_NAME,
+            </if>
+            PLANT_NAME)
+            VALUES ( #{item.smallsysId},
+            <if test="item.bracketName != null and item.bracketName != ''">
+                #{item.bracketName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="insertComponent"  parameterType="com.hhgs.plantshows.model.DO.SmallsysComponent">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            INTO DEVICEMODEL_SMALLSYS_COMPONENT
+            ( SMALLSYS_ID,
+            <if test="item.componentName != null and item.componentName != ''">
+                COMPONENT_NAME,
+            </if>
+            PLANT_NAME)
+            VALUES ( #{item.smallsysId},
+            <if test="item.componentName != null and item.componentName != ''">
+                #{item.componentName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+
+    <insert id="insertFirstsDeviceSign"  parameterType="com.hhgs.plantshows.model.DO.FirstsDeviceSign">
+        insert all
+        <foreach collection="firstsDeviceSignList" item="item" index="index">
+            INTO DEVICEMODEL_FIRSTS_DEVICE_SIGN
+            ( DEVICE_ID,
+            <if test="item.deviceSignName != null and item.deviceSignName != ''">
+                DEVICE_SIGN_NAME,
+            </if>
+            PLANT_NAME)
+            VALUES ( #{item.deviceId},
+            <if test="item.deviceSignName != null and item.deviceSignName != ''">
+                #{item.deviceSignName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="insertFirstsDeviceSecondsDevice"  parameterType="com.hhgs.plantshows.model.DO.FirstsDeviceSecondsDevice">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            INTO DEVICEMODEL_FIR_SEC_DEVICE
+            ( FIRSTS_DEVICE_ID,
+            <if test="item.secondsDeviceName != null and item.secondsDeviceName != ''">
+                SECONDS_DEVICE_NAME,
+            </if>
+            PLANT_NAME)
+            VALUES ( #{item.firstsDeviceId},
+            <if test="item.secondsDeviceName != null and item.secondsDeviceName != ''">
+                #{item.secondsDeviceName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+    <insert id="insertSecondsDeviceSign">
+        insert all
+        <foreach collection="list" item="item" index="index">
+            INTO DEVICEMODEL_SEC_DEVICE_SIGN
+            ( DEVICE_ID,
+            <if test="item.deviceSignName != null and item.deviceSignName != ''">
+                DEVICE_SIGN_NAME,
+            </if>
+            PLANT_NAME)
+            VALUES ( #{item.deviceId},
+            <if test="item.deviceSignName != null and item.deviceSignName != ''">
+                #{item.deviceSignName},
+            </if>
+            #{item.plantName})
+        </foreach>
+        select 1 from dual
+    </insert>
+
+
+
+    <!--删除原来的层级数据-->
+    <delete id="deleteOriginalData">
+        begin
+        delete from DEVICEMODEL_PLANT_BIGSYS t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_BIGSYS_SMALLSYS t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_SMALLSYS_F_DEVICE t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_SMALLSYS_BRACKET t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_SMALLSYS_COMPONENT t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_FIRSTS_DEVICE_SIGN t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_FIR_SEC_DEVICE t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_SEC_DEVICE_SIGN t where t.PLANT_NAME = #{plantName};
+        delete from DEVICEMODEL_SEC_DEVICE_PARTS t where t.PLANT_NAME = #{plantName};
+        end;
+    </delete>
+
+    <!--给场站大系统表中插入数据-->
+    <insert id="insertPlantBigSys" >
+
+        INSERT INTO DEVICEMODEL_PLANT_BIGSYS(
+            BIGSYS_NAME,
+            PLANT_ID,
+            PLANT_NAME
+        ) SELECT DISTINCT
+            BIGSYS_NAME AS BIGSYS_NAME,
+            #{plantId} AS PLANT_ID,
+            #{plantName} AS PLANT_NAME
+        FROM
+            ${plantTable}
+    </insert>
+
+
+    <!--更新场站数据，将null设置为-->
+    <update id="updateData" parameterType="java.lang.String">
+        begin
+        update DEVICEMODEL_PLANT_BIGSYS t set t.BIGSYS_NAME = '--' where  t.BIGSYS_NAME is null;
+        update DEVICEMODEL_BIGSYS_SMALLSYS t set t.SMALLSYS_NAME = '--' where t.SMALLSYS_NAME  is null;
+        update DEVICEMODEL_SMALLSYS_F_DEVICE t set t.DEVICE_NAME = '--' where t.DEVICE_NAME  is null ;
+        update DEVICEMODEL_FIR_SEC_DEVICE t set t.SECONDS_DEVICE_NAME = '--' where t.SECONDS_DEVICE_NAME is null;
+        update ${plantTable} t  set t.BIGSYS_NAME = '--' where  t.BIGSYS_NAME is null;
+        update ${plantTable} t  set t.SMALLSYS_NAME = '--' where t.SMALLSYS_NAME  is null;
+        update ${plantTable} t set t.FIRSTS_DEVICE_NAME = '--' where t.FIRSTS_DEVICE_NAME is null;
+        update ${plantTable} t set t.SECONDS_DEVICE_NAME = '--' where t.SECONDS_DEVICE_NAME is null;
+        update ${plantTable} t set t.PARTS_NAME = '--' where t.PARTS_NAME is null;
+        update ${plantTable} t set t.ORIGINAL_NUMBER =   "REPLACE"(ORIGINAL_NUMBER,' ','');
+        end;
+    </update>
+
+
+</mapper>

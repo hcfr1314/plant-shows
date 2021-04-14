@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.LevelMapper">
+    <select id="queryBoosterByName" parameterType="string" resultType="com.hhgs.plantshows.model.DO.BootsterStation">
+       select
+         ID id,
+        PLANT_CODE plantCode,
+        PLANT_NAME plantName,
+        DEVICE_NAME deviceName,
+        DEVICE_KKS deviceKks,
+        MAIN_SWITCH_NAME mainSwitchName,
+        MAIN_SWITCH_KKS mainSwitchKks,
+        BUS_NAME busName,
+        BUS_KKS busKks,
+        LINE_SWITCH_NAME lineSwitchName,
+        LINE_SWITCH_KKS lineSwitchKks,
+        LOWER_DEVICE_NAME lowerDeviceName,
+        LOWER_DEVICE_KKS lowerDeviceKKs
+       from DEVICEMODEL_BOOSTER_STATION where PLANT_NAME=#{plantName}
+    </select>
+
+    <select id="queryCollectByName" parameterType="string" resultType="com.hhgs.plantshows.model.DO.CollectionStation">
+ select
+    ID id,
+    PLANT_CODE plantCode,
+    SYSTEM_NAME systemName,
+    PLANT_NAME plantName,
+    SYSTEM_KKS systemKks,
+    BUS_NAME busName,
+    BUS_KKS busKks,
+    LINE_SWITCH_NAME lineSwitchName,
+    LINE_SWITCH_KKS lineSwitchKks,
+    CONNECTION_DEVICE_NAME conectDeviceName,
+    CONNECTION_DEVICE_KKS conectDeviceKks
+ from DEVICEMODEL_COLLECTION_STATION where PLANT_NAME=#{plantName}
+    </select>
+
+
+
+</mapper>

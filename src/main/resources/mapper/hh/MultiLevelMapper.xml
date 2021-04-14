@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.MultiLevelMapper">
+
+    <sql id="plantBigsys">
+        BIGSYS_ID AS bigsysId,
+        BIGSYS_NAME AS bigsysName
+    </sql>
+
+    <sql id="bigsysSmallsys">
+        SMALLSYS_ID AS smallsysId,
+        SMALLSYS_NAME AS smallsysName
+    </sql>
+
+    <sql id="smallsysFirstsDevice">
+        DEVICE_ID AS deviceId,
+        DEVICE_NAME AS deviceName
+    </sql>
+
+    <sql id="firstsDeviceSecondsDevice">
+        SECONDS_DEVICE_ID as secondsDeviceId,
+        SECONDS_DEVICE_NAME as secondsDeviceName
+    </sql>
+
+    <sql id="smallsysBracket">
+        BRACKET_ID AS bracketId,
+        BRACKET_NAME AS bracketName
+    </sql>
+
+    <sql id="smallsysComponent">
+        COMPONENT_ID AS componentId,
+        COMPONENT_NAME AS componentName
+    </sql>
+
+
+    <sql id="DeviceSign">
+        DEVICE_SIGN_ID as deviceSignId,
+        DEVICE_SIGN_NAME as deviceSignName
+    </sql>
+
+    <sql id="deviceMode">
+        t1.ID as id,
+        t1.ATTRIBUTE_ID as attributeID,
+        t1.UPPER_LIMIT as upperLimit,
+        t1.LOWER_LIMIT as lowerLimit,
+        t1.MORE_UPPER_LIMIT as moreUpperLimit,
+        t1.MORE_LOWER_LIMIT as moreLowerLimit,
+        t1.EXCEPTION_VALUE as exceptionValue,
+        t1.POINT_TYPE as pointType,
+        t2.ATTRIBUTE_NAME_EN as attributeNameEN,
+        t2.ATTRIBUTE_NAME_CN as attributeNameCN
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.hhgs.plantshows.model.DO.ImportData">
+        <result column="BIGSYS_NAME" jdbcType="VARCHAR" property="bigsysName"/>
+        <result column="SMALLSYS_NAME" jdbcType="VARCHAR" property="smallsysName"/>
+        <result column="FIRSTS_DEVICE_NAME" jdbcType="VARCHAR" property="firstsDeviceName"/>
+        <result column="SECONDS_DEVICE_NAME" jdbcType="VARCHAR" property="secondsDeviceName"/>
+        <result column="PARTS_NAME" jdbcType="VARCHAR" property="partsName"/>
+        <result column="POINT_NAME" jdbcType="VARCHAR" property="pointName"/>
+        <result column="GLOBAL_NUMBER" jdbcType="VARCHAR" property="globalNumber"/>
+        <result column="ORIGINAL_NUMBER" jdbcType="VARCHAR" property="originalPoint"/>
+        <result column="POINT_DESCRIPT" jdbcType="VARCHAR" property="pointDescript"/>
+    </resultMap>
+
+
+    <!--查询区域列表-->
+    <select id="queryBigsysList" parameterType="int" resultType="com.hhgs.plantshows.model.DO.PlantBigsys">
+        SELECT <include refid="plantBigsys"></include> from DEVICEMODEL_PLANT_BIGSYS WHERE PLANT_ID = #{plantId}
+    </select>
+
+    <!--查询方阵列表-->
+    <select id="querySmallsyslist" parameterType="int" resultType="com.hhgs.plantshows.model.DO.BigsysSmallsys">
+        SELECT <include refid="bigsysSmallsys"></include> FROM DEVICEMODEL_BIGSYS_SMALLSYS WHERE BIGSYS_ID = #{bigsysId}
+    </select>
+
+    <!--查询一级设备列表-->
+    <select id="queryFirstsDeviceList" parameterType="int"
+            resultType="com.hhgs.plantshows.model.DO.SmallsysFirstsDevice">
+        SELECT <include refid="smallsysFirstsDevice"></include> FROM DEVICEMODEL_SMALLSYS_F_DEVICE WHERE SMALLSYS_ID =
+        #{smallsysId}
+    </select>
+
+    <!--查询二级设备列表-->
+    <select id="querySecondsDeviceList" parameterType="int"
+            resultType="com.hhgs.plantshows.model.DO.FirstsDeviceSecondsDevice">
+        select <include refid="firstsDeviceSecondsDevice"></include> from DEVICEMODEL_FIR_SEC_DEVICE where
+        FIRSTS_DEVICE_ID = #{firstsDeviceId}
+    </select>
+
+    <!--查询二级设备所属标识-->
+    <select id="querySecondsDeviceSign" resultType="java.lang.String">
+        select distinct (DEVICE_SIGN_NAME) from DEVICEMODEL_SEC_DEVICE_SIGN where DEVICE_ID = #{deviceId}
+    </select>
+
+    <!--查询支架类型-->
+    <select id="queryBracketType" parameterType="int" resultType="java.lang.String">
+        SELECT BRACKET_NAME FROM DEVICEMODEL_SMALLSYS_BRACKET WHERE SMALLSYS_ID = #{smallsysId}
+    </select>
+
+    <!--查询组件类型-->
+    <select id="queryComponentType" parameterType="int" resultType="java.lang.String">
+        SELECT  COMPONENT_NAME FROM DEVICEMODEL_SMALLSYS_COMPONENT WHERE SMALLSYS_ID = #{smallsysId}
+    </select>
+
+    <!--查询一级设备所属标识-->
+    <select id="queryFirstsDeviceSign" resultType="java.lang.String">
+        select distinct (DEVICE_SIGN_NAME) from DEVICEMODEL_FIRSTS_DEVICE_SIGN where DEVICE_ID = #{deviceId}
+    </select>
+
+    <!--查询某个大系统下的设备-->
+    <select id="queryDeviceTypeByBigsysId" parameterType="int"
+            resultType="com.hhgs.plantshows.model.DO.SmallsysFirstsDevice">
+        select DISTINCT(B.DEVICE_NAME) deviceName,B.DEVICE_ID deviceId
+        FROM DEVICEMODEL_BIGSYS_SMALLSYS A INNER JOIN DEVICEMODEL_SMALLSYS_F_DEVICE B
+        ON A.SMALLSYS_ID=B.SMALLSYS_ID WHERE A.BIGSYS_ID=#{bigSysId}
+    </select>
+
+    <!--根据大系统和设备名称查询某类设备的设备标识-->
+    <select id="queryDeviceSignByDeviceId" parameterType="int" resultType="java.lang.String">
+        select DEVICE_SIGN_NAME from DEVICEMODEL_FIRSTS_DEVICE_SIGN where DEVICE_ID=#{deviceId}
+    </select>
+
+    <!--根据设备标识查询设备模型-->
+    <select id="queryDeviceModeByDeviceSign" parameterType="java.lang.String"
+            resultType="com.hhgs.plantshows.model.BO.BaseDeviceModelAndAttr">
+        SELECT <include refid="deviceMode"></include>  from DEVICEMODEL_DEVICE_BASE t1,DEVICEMODEL_POINT_ATTRIBUTE t2
+        where t1.ATTRIBUTE_ID = t2.ID and t1.DEVICE_NAME like '%${deviceSignName}%'
+    </select>
+
+    <!--根据测点英文名称查询数据-->
+    <!--<select id="queryDataByEnPointName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select BIGSYS_NAME,SMALLSYS_NAME,FIRSTS_DEVICE_NAME,SECONDS_DEVICE_NAME,PARTS_NAME,POINT_NAME,GLOBAL_NUMBER,ORIGINAL_NUMBER,POINT_DESCRIPT
+         from ${plantTable} t where t.GLOBAL_NUMBER like '%${enPointName}%'
+    </select>-->
+
+
+    <!--多条件查询-->
+    <select id="queryDataByCondition" resultMap="BaseResultMap">
+        select
+        BIGSYS_NAME,SMALLSYS_NAME,FIRSTS_DEVICE_NAME,SECONDS_DEVICE_NAME,PARTS_NAME,POINT_NAME,GLOBAL_NUMBER,ORIGINAL_NUMBER,POINT_DESCRIPT
+        from
+        ${plantTable}
+        WHERE 1=1
+        <if test="importData.bigsysName !=null and importData.bigsysName !=''">
+            AND BIGSYS_NAME = #{importData.bigsysName}
+        </if>
+
+        <if test="importData.bigSysList != null">
+            AND BIGSYS_NAME in
+            <foreach collection="importData.bigSysList" open="(" close=")" item="bigSysName" separator=",">
+              #{bigSysName}
+            </foreach>
+        </if>
+
+        <if test="importData.smallsysName !=null and importData.smallsysName !=''">
+            AND SMALLSYS_NAME = #{importData.smallsysName}
+        </if>
+
+        <if test="importData.firstsDeviceName !=null and importData.firstsDeviceName !=''">
+            AND FIRSTS_DEVICE_NAME = #{importData.firstsDeviceName}
+        </if>
+
+        <if test="importData.firstsDeviceSign !=null and importData.firstsDeviceSign !=''">
+            AND FIRSTS_DEVICE_SIGN = #{importData.firstsDeviceSign}
+        </if>
+
+        <if test="importData.deviceSignList != null">
+            AND EXISTS(
+            select * from (select DISTINCT(DEVICE_SIGN_NAME) from DEVICEMODEL_FIRSTS_DEVICE_SIGN where PLANT_NAME = #{plantName}) o where  o.DEVICE_SIGN_NAME in
+            <foreach collection="importData.deviceSignList" open="(" close=")" item="deviceSign" separator=",">
+                #{deviceSign}
+            </foreach>
+            and o.DEVICE_SIGN_NAME = ${plantTable}.FIRSTS_DEVICE_SIGN
+            )
+        </if>
+
+        <if test="importData.secondsDeviceName !=null and importData.secondsDeviceName !=''">
+            AND SECONDS_DEVICE_NAME = #{importData.secondsDeviceName}
+        </if>
+
+        <if test="importData.globalNumber != null and importData.globalNumber!=''">
+            AND GLOBAL_NUMBER LIKE '%${importData.globalNumber}%'
+        </if>
+    </select>
+
+</mapper>

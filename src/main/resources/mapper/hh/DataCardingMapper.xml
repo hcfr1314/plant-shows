@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hhgs.plantshows.mapper.hh.DataCardingMapper">
+
+
+    <sql id="plantBigsys">
+        BIGSYS_ID AS bigsysId,
+        BIGSYS_NAME AS bigsysName,
+        PLANT_NAME AS plantName
+    </sql>
+
+    <sql id="bigsysSmallsys">
+        SMALLSYS_ID AS smallsysId,
+        SMALLSYS_NAME AS smallsysName,
+        PLANT_NAME AS plantName
+    </sql>
+
+    <sql id="smallsysFirstsDevice">
+        DEVICE_ID AS deviceId,
+        DEVICE_NAME AS deviceName,
+        PLANT_NAME AS plantName
+    </sql>
+
+
+    <select id="queryBigsys" resultType="com.hhgs.plantshows.model.DO.PlantBigsys">
+        select <include refid="plantBigsys"></include> from DEVICEMODEL_PLANT_BIGSYS where PLANT_NAME = #{plantName}
+    </select>
+
+    <!--查询场站大表中该大系统下的小系统-->
+    <select id="querySmallsysByBigsys" resultType="java.lang.String">
+            select  SMALLSYS_NAME from ${tableName} where 1=1
+            <choose>
+                <when test="bigsysName != null and bigsysName != ''">
+                    and BIGSYS_NAME = #{bigsysName}
+                </when>
+                <otherwise>
+                    and BIGSYS_NAME is NULL
+                </otherwise>
+            </choose>
+             group by SMALLSYS_NAME
+    </select>
+
+    <select id="querySmallsysId" resultType="int">
+        select SMALLSYS_ID FROM DEVICEMODEL_BIGSYS_SMALLSYS where 1=1
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME = #{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        and BIGSYS_ID = #{bigsysId}
+    </select>
+
+
+    <!--查询场站大表中该小系统下的设备-->
+    <select id="queryDeviceByBigsysAndSmallsys" resultType="java.lang.String">
+        select FIRSTS_DEVICE_NAME from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        group by FIRSTS_DEVICE_NAME
+    </select>
+
+    <!--查询场站大表中该小系统下的支架-->
+    <select id="queryBracketByBigsysAndSmallsys" resultType="java.lang.String">
+        select BRACKET_TYPE from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        group by BRACKET_TYPE
+    </select>
+
+    <!--查询场站大表中该小系统下的组件-->
+    <select id="queryComponentByBigsysAndSmallsys" resultType="java.lang.String">
+        select COMPONENT_TYPE from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        group by COMPONENT_TYPE
+    </select>
+
+
+    <!--获取一级设备标识-->
+    <select id="queryDeviceSignByBigsysAndSmallsysAndFirstsDeviceName" resultType="java.lang.String">
+        select FIRSTS_DEVICE_SIGN from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="firstsDeviceName != null and firstsDeviceName != ''">
+                and FIRSTS_DEVICE_NAME=#{firstsDeviceName}
+            </when>
+            <otherwise>
+                and FIRSTS_DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+        group by FIRSTS_DEVICE_SIGN
+    </select>
+
+    <!--获取一级设备下的二级设备-->
+    <select id="querySecondsDeviceByBigsysAndSmallsysAndFirstsDeviceName" resultType="java.lang.String">
+        select SECONDS_DEVICE_NAME from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="firstsDeviceName != null and firstsDeviceName != ''">
+                and FIRSTS_DEVICE_NAME=#{firstsDeviceName}
+            </when>
+            <otherwise>
+                and FIRSTS_DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+        group by SECONDS_DEVICE_NAME
+    </select>
+
+
+    <!--查询一级设备id-->
+    <select id="queryFirstsDeviceId" resultType="int">
+        select DEVICE_ID FROM DEVICEMODEL_SMALLSYS_F_DEVICE where 1=1
+        <choose>
+            <when test="firstsDeviceName != null and firstsDeviceName != ''">
+                and DEVICE_NAME = #{firstsDeviceName}
+            </when>
+            <otherwise>
+                and DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+        and SMALLSYS_ID = #{smallsysId}
+    </select>
+
+    <!--查询二级设备id-->
+    <select id="querySecondsDeviceId" resultType="int">
+        select DEVICE_ID FROM DEVICEMODEL_SMALLSYS_F_DEVICE where 1=1
+        <choose>
+            <when test="secondsDeviceName != null and secondsDeviceName != ''">
+                and DEVICE_NAME = #{secondsDeviceName}
+            </when>
+            <otherwise>
+                and DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+        and DEVICE_ID = #{firstsDeviceId}
+    </select>
+
+    <!--查询二级设备的设备标识-->
+    <select id="querySecondsDeviceSign" resultType="java.lang.String">
+        select SECONDS_DEVICE_SIGN from ${tableName} where 1=1
+        <choose>
+            <when test="bigsysName != null and bigsysName != ''">
+                and BIGSYS_NAME = #{bigsysName}
+            </when>
+            <otherwise>
+                and BIGSYS_NAME is NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="smallsysName != null and smallsysName != ''">
+                and SMALLSYS_NAME=#{smallsysName}
+            </when>
+            <otherwise>
+                and SMALLSYS_NAME is NULL
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="firstsDeviceName != null and firstsDeviceName != ''">
+                and FIRSTS_DEVICE_NAME=#{firstsDeviceName}
+            </when>
+            <otherwise>
+                and FIRSTS_DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+
+        <choose>
+            <when test="secondsDeviceName != null and secondsDeviceName != ''">
+                and SECONDS_DEVICE_NAME=#{secondsDeviceName}
+            </when>
+            <otherwise>
+                and SECONDS_DEVICE_NAME is NULL
+            </otherwise>
+        </choose>
+        group by SECONDS_DEVICE_SIGN
+    </select>
+
+</mapper>
