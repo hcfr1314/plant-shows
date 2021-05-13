@@ -11,7 +11,7 @@ import java.io.*;
 import java.util.List;
 
 
-@Component
+//@Component
 public class HbaseUtil {
 
     public static Connection connection = null;

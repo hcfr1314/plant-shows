@@ -53,9 +53,9 @@ public class PrometarFirstPageTask {
 
 
     @Transactional
-    //@Scheduled(fixedDelay = 3600000)
     //每天凌晨6点执行一次
     @Scheduled(cron = "0 0 6 * * ? ")
+    //@Scheduled(fixedDelay = 3600000)
     void saveIndexData() {
 
         List<ComputeIndex> computeIndexList = new ArrayList<>();
@@ -69,6 +69,7 @@ public class PrometarFirstPageTask {
                     IrradiationIndex irradiationIndex = parametarShowsMapper.queryMonthAccIrradiation(plantCode);
 
                     if (indexData != null && irradiationIndex != null && plantInfoMap.size() > 0) {
+
                         //获取该场站当日上网电量
                         double currentOnGridEnergy = indexData.getCurrentOnGridEnergy();
 

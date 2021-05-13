@@ -21,9 +21,10 @@ public class MonthNetPowerTask {
     private NetAndPlanPowerMapper netAndPlanPowerMapper;
 
     /**
-     * 每天执行一次
+     * 每天凌晨5:40执行一次
      */
-    @Scheduled(cron = "0 0 5 * * ?")
+    @Scheduled(cron = "0 40 5 * * ? ")
+    //@Scheduled(fixedDelay = 3600000)
     public void updateMonthNetPower() {
         IndexData totalPower = parametarShowsService.getTotalPower();
         //这里为了判断当月第一天库中是否有数据，如果没有则新增一条数据

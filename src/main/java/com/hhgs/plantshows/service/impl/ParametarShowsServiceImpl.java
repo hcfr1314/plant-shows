@@ -166,10 +166,13 @@ public class ParametarShowsServiceImpl implements ParametarShowsService {
         List<InfluxDBDataObject> influxDBDataObjects = influxDBDataObjectMapper.queryObjectNameByStationName(nameList);
         List<Point> points = pointMapper.queryByType().stream().filter(e->e.getPlantCode()==121010).collect(Collectors.toList());
 
+        //int index = 0;
+
         //请求获取数据
         for (Point point : points) {
             String dataObjectName = influxDBDataObjects.stream().filter(e -> e.getStationName().equals(point.getPlantName())).collect(Collectors.toList()).get(0).getDataObjectName();
             List<String[]> data = getData(dataObjectName, point);
+            //index = data.size();
             if (data != null) {
                 map.put(point.getPlantCode(), data);
             }

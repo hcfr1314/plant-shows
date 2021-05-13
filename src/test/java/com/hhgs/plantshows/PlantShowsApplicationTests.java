@@ -4,6 +4,8 @@ package com.hhgs.plantshows;
 
 import com.hhgs.plantshows.mapper.avatar.BcsMapper;
 import com.hhgs.plantshows.mapper.hh.NetAndPlanPowerMapper;
+import com.hhgs.plantshows.mapper.mysqlAvatar4.AvatarBcsMapper;
+import com.hhgs.plantshows.model.DO.Bcs;
 import com.hhgs.plantshows.service.SaveDataFromHbaseToCSV;
 import com.hhgs.plantshows.task.MonthNetPowerTask;
 import com.hhgs.plantshows.util.HbaseUtil;
@@ -26,12 +28,14 @@ public class PlantShowsApplicationTests {
 	@Autowired
 	private MonthNetPowerTask task;
 
-	@Autowired
-	private HbaseUtil util;
+	//@Autowired
+	//private HbaseUtil util;
 
 	@Autowired
 	private BcsMapper bcsMapper;
 
+	@Autowired
+	private AvatarBcsMapper avatarBcsMapper;
 
 	@Autowired
 	private SaveDataFromHbaseToCSV saveDataFromHbaseToCSV;
@@ -100,5 +104,16 @@ public class PlantShowsApplicationTests {
 		List<String> ids = new ArrayList<>();
 		ids.add("318199566347");
 		saveDataFromHbaseToCSV.saveDataToCSV("茶卡哇玉风电场",ids,"2020-11-12 00:00:00","2020-11-12 23:59:59");
+	}
+
+	@Test
+	public void testMysqlAvatar4() {
+		List<String> ids = new ArrayList<>();
+		ids.add("189080801313");
+		ids.add("455504564374");
+		ids.add("249217036353");
+
+		List<Bcs> bcsList = avatarBcsMapper.queryBcsByOrgId(ids);
+		System.out.println(bcsList);
 	}
 }
